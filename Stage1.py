@@ -482,40 +482,6 @@ def genes_of_subgroup(subgroup):
 			res.add(g)
 	return str(list(res))[1:-1]
 
-def print_res_to_csvV2_0(res, input_sg_genes_dict, genesList, genesNames, path, homology):
-	CSV_file_name = path+ "/output.csv"
-	f = open(CSV_file_name, "w")
-	f.write("sgRNA,score, genes (score; mm; postions)\n")
-	for candidate in res:
-		#make the output in the wanted way
-		genes_for_Thefile = ""
-		genes = candidate.genes_score_dict
-		sites = candidate.targets_dict
-		for gene in genes.keys():
-			geneIndex = genesNames.index(gene)
-			genes_for_Thefile += gene + " (" + str(genes[gene])
-			if len(sites) > 0:
-				for site in sites.keys():
-					if site == gene:
-						genes_for_Thefile += "; "
-						mm = ''
-						for item in sites[site]:  #item here is a single match site
-							#print("item:", item)
-							if len(item[1].keys()) > 0:
-								genes_for_Thefile += " " + str(list(map(lambda x: x+1, list(item[1].keys()))))[1:-1].replace(",", "")
-							#find pos:
-							sg_position = str(genesList[geneIndex].find(item[0])) #item[0] is the target site seq
-							if sg_position == "-1":
-								sg_position = str(CasSites.give_complementary(genesList[geneIndex]).find(item[0])) + "R"
-							genes_for_Thefile += "; pos: " + str(sg_position)  + ") "
-			else:
-				sg_position = str(genesList[geneIndex].find(candidate.seq))
-				if sg_position == "-1":
-					sg_position = str(CasSites.give_complementary(genesList[geneIndex]).find(candidate.seq)) + "R"
-				genes_for_Thefile += "1; perfect match; " + sg_position + ") "
-		row = candidate.seq + ", " + str(candidate.cut_expectation)+ ","  + genes_for_Thefile + "\n"
-		f.write(row)
-	f.close()
 
 def print_res_to_file_CSV(res, input_sg_genes_dict, genesList, genesNames, path='', homology = False):
 	''' input(res) format:	array of permutations_DS
